@@ -36,6 +36,7 @@
 #include <QMessageBox>
 #include <QRegExp>
 #include <QtSvg>
+#include <QPlainTextEdit>
 
 #include "qucs.h"
 #include "main.h"
@@ -50,6 +51,12 @@
 
 #ifdef _WIN32
 #include <Windows.h>  //for OutputDebugString
+#endif
+
+#ifdef __MINGW32__
+#define executableSuffix ".exe"
+#else
+#define executableSuffix ""
 #endif
 
 tQucsSettings QucsSettings;
@@ -86,7 +93,7 @@ bool loadSettings()
     if(settings.contains("Directive"))QucsSettings.Directive.setNamedColor(settings.value("Directive").toString());
     if(settings.contains("Task"))QucsSettings.Comment.setNamedColor(settings.value("Task").toString());
 
-    if(settings.contains("Editor"))QucsSettings.Editor = settings.value("Editor").toString();
+    //if(settings.contains("Qucsator"))QucsSettings.Qucsator = settings.value("Qucsator").toString();
     //if(settings.contains("BinDir"))QucsSettings.BinDir = settings.value("BinDir").toString();
     //if(settings.contains("LangDir"))QucsSettings.LangDir = settings.value("LangDir").toString();
     //if(settings.contains("LibDir"))QucsSettings.LibDir = settings.value("LibDir").toString();
@@ -96,14 +103,6 @@ bool loadSettings()
     //if(settings.contains("ExamplesDir"))QucsSettings.ExamplesDir = settings.value("ExamplesDir").toString();
     //if(settings.contains("DocDir"))QucsSettings.DocDir = settings.value("DocDir").toString();
     if(settings.contains("OctaveBinDir"))QucsSettings.OctaveBinDir.setPath(settings.value("OctaveBinDir").toString());
-    if(settings.contains("NgspiceExecutable")) QucsSettings.NgspiceExecutable = settings.value("NgspiceExecutable").toString();
-    else QucsSettings.NgspiceExecutable = "ngspice";
-    if(settings.contains("XyceExecutable")) QucsSettings.XyceExecutable = settings.value("XyceExecutable").toString();
-    else QucsSettings.XyceExecutable = "/usr/local/Xyce-Release-6.2.0-OPENSOURCE/bin/runxyce";
-    if(settings.contains("XyceParExecutable")) QucsSettings.XyceParExecutable = settings.value("XyceParExecutable").toString();
-    else QucsSettings.XyceParExecutable = "/usr/local/Xyce-Release-6.2.0-OPENMPI-OPENSOURCE/bin/xmpirun";
-    if(settings.contains("Nprocs")) QucsSettings.NProcs = settings.value("Nprocs").toInt();
-    else QucsSettings.NProcs = 4;
     if(settings.contains("QucsHomeDir"))
       if(settings.value("QucsHomeDir").toString() != "")
          QucsSettings.QucsHomeDir.setPath(settings.value("QucsHomeDir").toString());
@@ -168,7 +167,7 @@ bool saveApplSettings()
     settings.setValue("Attribute", QucsSettings.Attribute.name());
     settings.setValue("Directive", QucsSettings.Directive.name());
     settings.setValue("Task", QucsSettings.Comment.name());
-    settings.setValue("Editor", QucsSettings.Editor);
+    //settings.setValue("Qucsator", QucsSettings.Qucsator);
     //settings.setValue("BinDir", QucsSettings.BinDir);
     //settings.setValue("LangDir", QucsSettings.LangDir);
     //settings.setValue("LibDir", QucsSettings.LibDir);
@@ -178,10 +177,6 @@ bool saveApplSettings()
     //settings.setValue("ExamplesDir", QucsSettings.ExamplesDir);
     //settings.setValue("DocDir", QucsSettings.DocDir);
     settings.setValue("OctaveBinDir", QucsSettings.OctaveBinDir.canonicalPath());
-    settings.setValue("NgspiceExecutable",QucsSettings.NgspiceExecutable);
-    settings.setValue("XyceExecutable",QucsSettings.XyceExecutable);
-    settings.setValue("XyceParExecutable",QucsSettings.XyceParExecutable);
-    settings.setValue("Nprocs",QucsSettings.NProcs);
     settings.setValue("QucsHomeDir", QucsSettings.QucsHomeDir.canonicalPath());
     settings.setValue("IgnoreVersion", QucsSettings.IgnoreFutureVersion);
     settings.setValue("GraphAntiAliasing", QucsSettings.GraphAntiAliasing);
@@ -393,7 +388,7 @@ void createIcons() {
           scene->addLine(l->x1, l->y1, l->x2, l->y2, l->style);
         }
 
-        foreach(Arc *a, Arcs) {
+        foreach(struct Arc *a, Arcs) {
           // we need an open item here; QGraphisEllipseItem draws a filled ellipse and doesn't do the job here...
           QPainterPath *path = new QPainterPath();
           // the components do not contain the angles in degrees but in 1/16th degrees -> conversion needed
@@ -669,26 +664,63 @@ void createListComponentEntry(){
       Element *e = (Mod->info) (Name, File, true);
       Component *c = (Component* ) e;
 
-      QString qucsEntry = c->save();
-      fprintf(stdout, "%s; qucs    ; %s\n", c->Model.toAscii().data(), qucsEntry.toAscii().data());
-
-      // add dummy ports/wires, avoid segfault
-      int port = 0;
-      foreach (Port *p, c->Ports) {
-        Node *n = new Node(0,0);
-        n->Name="_net"+QString::number(port);
-        p->Connection = n;
-        port +=1;
-      }
-
       // skip Subcircuit, segfault, there is nothing to netlist
       if (c->Model == "Sub" or c->Model == ".Opt") {
         fprintf(stdout, "WARNING, qucsator netlist not generated for %s\n\n", c->Model.toAscii().data());
         continue;
       }
 
-      QString qucsatorEntry = c->getNetlist();
-      fprintf(stdout, "%s; qucsator; %s\n", c->Model.toAscii().data(), qucsatorEntry.toAscii().data());
+      //
+      // Create mustache template for variables substitution
+      //
+
+      // add dummy ports/wires, avoid segfault
+      int port = 0;
+      foreach (Port *p, c->Ports) {
+        Node *n = new Node(0,0);
+        n->Name=QString("{{PORT[%1].NET}}").arg(port);
+        p->Connection = n;
+        port +=1;
+      }
+
+      Q3PtrList<Property> props = c->Props;
+      foreach (Property *prop, props) {
+          prop->Value = QString("{{%1}}").arg(prop->Name);
+      }
+
+      c->Name = QString("{{ID}}");
+
+      //
+      // Collect all data model/net listing
+      //
+      QMap<QString, QString> models;
+      //models["qucs"] = c->save();
+      models["qucsator"] = c->getNetlist();
+      models["ngspice"] = c->getSpiceNetlist(false);
+      models["xyce"] = c->getSpiceNetlist(true);
+      //models["vhdl"] = c->get_VHDL_Code(0);
+      //models["verilog"] = c->get_Verilog_Code(0);
+      foreach (const QString &modelName, models.keys()) {
+          QString serialised = models[modelName].trimmed();
+          serialised.replace("\n", "\\n");
+          models[modelName] = serialised;
+      }
+
+      //
+      // Apply filter
+      //
+      if (models["qucsator"].isEmpty() || models["ngspice"].isEmpty() ||models["xyce"].isEmpty())
+          continue;
+
+      //
+      // Dump data model/net listing
+      //
+      foreach (const QString &modelName, models.keys()) {
+          QString record = QString("%1;%2;%3").arg(c->Model).arg(modelName).arg(models[modelName]);
+          fprintf(stdout, "%s\n", record.toLocal8Bit().constData());
+      }
+      fprintf(stdout, "\n");
+
       } // module
     } // category
 }
@@ -747,6 +779,13 @@ int main(int argc, char *argv[])
   QucsSettings.QucsHomeDir.setPath(QDir::homeDirPath()+QDir::convertSeparators ("/.qucs"));
   QucsSettings.QucsWorkDir.setPath(QucsSettings.QucsHomeDir.canonicalPath());
 
+//  var = getenv("QUCSATOR");
+//  if(var != NULL) {
+//	  QucsSettings.Qucsator = QString(var);
+//  }
+//  else {
+//	  QucsSettings.Qucsator = QucsSettings.BinDir + "qucsator" + executableSuffix;
+//  }
 
   var = getenv("ADMSXMLBINDIR");
   if(var != NULL) {
