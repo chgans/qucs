@@ -53,9 +53,11 @@ BiasT::BiasT()
   Name  = "X";
 
   Props.append(new Property("L", "1 uH", false,
-	QObject::tr("for transient simulation: inductance in Henry")));
+			    QObject::tr("for transient simulation: inductance"),
+			    "henry", "real"));
   Props.append(new Property("C", "1 uF", false,
-	QObject::tr("for transient simulation: capacitance in Farad")));
+			    QObject::tr("for transient simulation: capacitance"),
+			    "farad", "real"));
 }
 
 BiasT::~BiasT()

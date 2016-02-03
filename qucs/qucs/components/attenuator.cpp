@@ -49,11 +49,14 @@ Attenuator::Attenuator()
   Name  = "X";
 
   Props.append(new Property("L", "10 dB", true,
-		QObject::tr("power attenuation")));
+			    QObject::tr("power attenuation"),
+			    "0.1 lg(re 1 mW", "real"));
   Props.append(new Property("Zref", "50 Ohm", false,
-		QObject::tr("reference impedance")));
+			    QObject::tr("reference impedance"),
+			    "ohm", "real"));
   Props.append(new Property("Temp", "26.85", false,
-		QObject::tr("simulation temperature in degree Celsius")));
+			    QObject::tr("simulation temperature"),
+			    "degC", "real"));
 }
 
 Attenuator::~Attenuator()

@@ -48,13 +48,17 @@ Ampere_noise::Ampere_noise()
   Name  = "I";
 
   Props.append(new Property("i", "1e-6", true,
-		QObject::tr("current power spectral density in A^2/Hz")));
+			    QObject::tr("current power spectral density"),
+			    "ampere^2.hertz^-1"));
   Props.append(new Property("e", "0", false,
-		QObject::tr("frequency exponent")));
+			    QObject::tr("frequency exponent"),
+			    "unitless", "real"));
   Props.append(new Property("c", "1", false,
-		QObject::tr("frequency coefficient")));
+			    QObject::tr("frequency coefficient"),
+			    "unitless", "real"));
   Props.append(new Property("a", "0", false,
-		QObject::tr("additive frequency term")));
+			    QObject::tr("additive frequency term"),
+			    "hertz", "real"));
 
   rotate();  // fix historical flaw
 }

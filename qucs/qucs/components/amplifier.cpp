@@ -41,13 +41,17 @@ Amplifier::Amplifier()
   Name  = "X";
 
   Props.append(new Property("G", "10", true,
-		QObject::tr("voltage gain")));
+			    QObject::tr("voltage gain"),
+			    "unitless", "real"));
   Props.append(new Property("Z1", "50 Ohm", false,
-		QObject::tr("reference impedance of input port")));
+			    QObject::tr("reference impedance of input port"),
+			    "ohm", "real"));
   Props.append(new Property("Z2", "50 Ohm", false,
-		QObject::tr("reference impedance of output port")));
+			    QObject::tr("reference impedance of output port"),
+			    "ohm", "real"));
   Props.append(new Property("NF", "0 dB", false,
-		QObject::tr("noise figure")));
+			    QObject::tr("noise figure"),
+			    "0.1 lg(re 1 mW)", "real"));
 }
 
 Amplifier::~Amplifier()

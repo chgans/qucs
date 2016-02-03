@@ -1008,8 +1008,11 @@ int Component::analyseLine(const QString& Row, int numProps)
   if((s == "PortSym") || (s == ".PortSym")) {  // backward compatible
     if(!getIntegers(Row, &i1, &i2, &i3))
       return -1;
-    for(i6 = Ports.count(); i6<i3; i6++)  // if ports not in numerical order
-      Ports.append(new Port(0, 0, false));
+    for(i6 = Ports.count(); i6<i3; i6++)  { // if ports not in numerical order
+      Port *port = new Port(0, 0);
+      port->avail = false;
+      Ports.append(port);
+    }
 
     Port *po = Ports.at(i3-1);
     po->x  = i1;

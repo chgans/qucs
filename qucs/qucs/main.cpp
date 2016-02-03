@@ -532,6 +532,7 @@ void createDocData() {
         compData << "Bitmap file; "       + QString(File);
         compData << "Properties; "        + QString::number(c->Props.count());
         compData << "Category; "          + category;
+        compData << "Ports; "             + QString::number(c->Ports.count());
 
         // 001_data.csv - CSV file with component data
         QString ID = QString("%1").arg(num,3,'d',0,'0');
@@ -547,13 +548,15 @@ void createDocData() {
 
         QStringList compProps;
         compProps << "# Note: auto-generated file (changes will be lost on update)";
-        compProps << QString("# %1; %2; %3; %4").arg(  "Name", "Value", "Display", "Description");
+        compProps << QString("# %1; %2; %3; %4; %5; %6").arg(  "Name", "Value", "Display", "Description", "Unit", "DataType");
         foreach(Property *prop, c->Props) {
-          compProps << QString("%1; \"%2\"; %3; \"%4\"").arg(
+          compProps << QString("%1; \"%2\"; %3; \"%4\"; %5; %6").arg(
                          prop->Name,
                          prop->Value,
                          prop->display?"yes":"no",
-                         prop->Description.replace("\"","\"\"")); // escape quote in quote
+                         prop->Description.replace("\"","\"\""),
+			 prop->Unit,
+			 prop->DataType); // escape quote in quote
         }
 
         // 001_props.csv - CSV file with component properties
@@ -646,6 +649,9 @@ void createDocData() {
  */
 void createListComponentEntry(){
 
+  static const QStringList excludedModels = QStringList() << "Sub" << ".Opt"
+							  << "SPICE" << "VHDL" << "Verilog" // File based
+    ;
   Module::registerModules ();
   QStringList cats = Category::getCategories ();
   // table for quick reference, schematic and netlist entry
@@ -664,8 +670,17 @@ void createListComponentEntry(){
       Element *e = (Mod->info) (Name, File, true);
       Component *c = (Component* ) e;
 
-      // skip Subcircuit, segfault, there is nothing to netlist
-      if (c->Model == "Sub" or c->Model == ".Opt") {
+      fprintf(stderr, "# Processing %s...\n", c->Model.toAscii().data());
+      if (c->isSimulation)
+	fprintf(stderr, "# Kind: Simulation\n");
+      else if (c->isProbe)
+	fprintf(stderr, "# Kind: Probe\n");
+      else if (c->isEquation)
+	fprintf(stderr, "# Kind: Equation\n");
+      else
+	fprintf(stderr, "# Kind: Regular\n");
+      
+      if (excludedModels.contains(c->Model)) {
         fprintf(stdout, "WARNING, qucsator netlist not generated for %s\n\n", c->Model.toAscii().data());
         continue;
       }
@@ -698,19 +713,17 @@ void createListComponentEntry(){
       models["qucsator"] = c->getNetlist();
       models["ngspice"] = c->getSpiceNetlist(false);
       models["xyce"] = c->getSpiceNetlist(true);
-      //models["vhdl"] = c->get_VHDL_Code(0);
-      //models["verilog"] = c->get_Verilog_Code(0);
+      models["vhdl"] = c->get_VHDL_Code(0);
+      models["verilog"] = c->get_Verilog_Code(0);
       foreach (const QString &modelName, models.keys()) {
-          QString serialised = models[modelName].trimmed();
-          serialised.replace("\n", "\\n");
-          models[modelName] = serialised;
+          models[modelName] = models[modelName].trimmed().replace("\n", "\\n");
       }
 
       //
       // Apply filter
       //
-      if (models["qucsator"].isEmpty() || models["ngspice"].isEmpty() ||models["xyce"].isEmpty())
-          continue;
+      //if (models["qucsator"].isEmpty() || models["ngspice"].isEmpty() ||models["xyce"].isEmpty())
+      //    continue;
 
       //
       // Dump data model/net listing
@@ -720,7 +733,8 @@ void createListComponentEntry(){
           fprintf(stdout, "%s\n", record.toLocal8Bit().constData());
       }
       fprintf(stdout, "\n");
-
+      fflush(stdout);
+      fflush(stderr);
       } // module
     } // category
 }

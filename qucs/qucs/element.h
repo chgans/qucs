@@ -71,11 +71,10 @@ struct Area {
 
 struct Port {
   Port() {};
-  Port(int _x, int _y, bool _avail=true) : x(_x), y(_y), avail(_avail) {
-    Type=""; Connection=0;};
+Port(int _x, int _y, const QString &_name="", const QString &_type="inout", bool _avail=true) : x(_x), y(_y), avail(_avail), Type(_type), Name(_name) {};
   int   x, y;
   bool  avail;
-  QString Type;
+  QString Type, Name;
   Node *Connection;
 };
 
@@ -93,9 +92,9 @@ struct Text {
 
 struct Property {
   Property(const QString& _Name="", const QString& _Value="",
-	   bool _display=false, const QString& Desc="")
-	 : Name(_Name), Value(_Value), display(_display), Description(Desc) {};
-  QString Name, Value;
+	   bool _display=false, const QString& Desc="", const QString& _Unit="", const QString& _DataType="")
+  : Name(_Name), Value(_Value), Unit(_Unit), DataType(_DataType), display(_display), Description(Desc) {};
+  QString Name, Value, Unit, DataType;
   bool    display;   // show on schematic or not ?
   QString Description;
 };

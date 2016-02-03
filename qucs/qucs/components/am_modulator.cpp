@@ -36,9 +36,9 @@ AM_Modulator::AM_Modulator()
   Lines.append(new Line(-12,  0,-17, -5,QPen(Qt::darkBlue,2)));
   Texts.append(new Text(-30,-22, QObject::tr("AM"), Qt::black, 10.0,1.0,0.0));
 
-  Ports.append(new Port(  0,-30));
-  Ports.append(new Port(  0, 30));
-  Ports.append(new Port(-30,  0));
+  Ports.append(new Port(  0,-30, "+"));
+  Ports.append(new Port(  0, 30, "-"));
+  Ports.append(new Port(-30,  0, "in"));
 
   x1 = -30; y1 = -30;
   x2 =  14; y2 =  30;
@@ -49,13 +49,17 @@ AM_Modulator::AM_Modulator()
   Name  = "V";
 
   Props.append(new Property("U", "1 V", true,
-		QObject::tr("peak voltage in Volts")));
+			    QObject::tr("peak voltage"),
+			    "volt", "real"));
   Props.append(new Property("f", "1 GHz", false,
-		QObject::tr("frequency in Hertz")));
+			    QObject::tr("frequency"),
+			    "hertz", "real"));
   Props.append(new Property("Phase", "0", false,
-		QObject::tr("initial phase in degrees")));
+			    QObject::tr("initial phase"),
+			    "degree", "real"));
   Props.append(new Property("m", "1.0", false,
-		QObject::tr("modulation level")));
+			    QObject::tr("modulation level"),
+			    "1", "real"));
 }
 
 AM_Modulator::~AM_Modulator()

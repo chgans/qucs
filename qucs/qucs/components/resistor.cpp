@@ -25,15 +25,20 @@ Resistor::Resistor(bool european)
   Description = QObject::tr("resistor");
 
   Props.append(new Property("R", "50 Ohm", true,
-    QObject::tr("ohmic resistance in Ohms")));
+			    QObject::tr("ohmic resistance"),
+			    "ohm", "real"));
   Props.append(new Property("Temp", "26.85", false,
-    QObject::tr("simulation temperature in degree Celsius")));
+			    QObject::tr("simulation temperature"),
+			    "degC", "real"));
   Props.append(new Property("Tc1", "0.0", false,
-    QObject::tr("first order temperature coefficient")));
+			    QObject::tr("first order temperature coefficient"),
+			    "unitless", "real"));
   Props.append(new Property("Tc2", "0.0", false,
-    QObject::tr("second order temperature coefficient")));
+			    QObject::tr("second order temperature coefficient"),
+			    "unitless", "real"));
   Props.append(new Property("Tnom", "26.85", false,
-    QObject::tr("temperature at which parameters were extracted")));
+			    QObject::tr("temperature at which parameters were extracted"),
+			    "degC", "real"));
 
   // this must be the last property in the list !!!
   Props.append(new Property("Symbol", "european", false,
@@ -90,8 +95,8 @@ void Resistor::createSymbol()
     Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
   }
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(new Port(-30,  0, "1"));
+  Ports.append(new Port( 30,  0, "2"));
 
   x1 = -30; y1 = -11;
   x2 =  30; y2 =  11;

@@ -42,7 +42,9 @@ Subcircuit::Subcircuit()
   Name  = "SUB";
 
   // Do NOT call createSymbol() here. But create port to let it rotate.
-  Ports.append(new Port(0, 0, false));
+  Port *port = new Port(0, 0);
+  port->avail = false;
+  Ports.append(port);
 }
 
 // ---------------------------------------------------------------------

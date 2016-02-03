@@ -34,8 +34,8 @@ Ampere_ac::Ampere_ac()
   Arcs.append(new Arc( 12,  5,  6,  6,16*270, 16*180,QPen(Qt::darkBlue,2)));
   Arcs.append(new Arc( 12, 11,  6,  6, 16*90, 16*180,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port( 30,  0));
-  Ports.append(new Port(-30,  0));
+  Ports.append(new Port( 30,  0, "+"));
+  Ports.append(new Port(-30,  0, "-"));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  16;
@@ -47,13 +47,17 @@ Ampere_ac::Ampere_ac()
   SpiceModel = "I";
 
   Props.append(new Property("I", "1 mA", true,
-		QObject::tr("peak current in Ampere")));
+			    QObject::tr("peak current"),
+			    "ampere", "real"));
   Props.append(new Property("f", "1 GHz", false,
-		QObject::tr("frequency in Hertz")));
+			    QObject::tr("frequency"),
+			    "hertz", "real"));
   Props.append(new Property("Phase", "0", false,
-		QObject::tr("initial phase in degrees")));
+			    QObject::tr("initial phase"),
+			    "degree", "real"));
   Props.append(new Property("Theta", "0", false,
-		QObject::tr("damping factor (transient simulation only)")));
+			    QObject::tr("damping factor (transient simulation only)"),
+			    "second^-1", "real"));
 
   rotate();  // fix historical flaw
 }

@@ -51,16 +51,20 @@ AC_Sim::AC_Sim()
 
   // The index of the first 4 properties must not changed. Used in recreate().
   Props.append(new Property("Type", "lin", true,
-			QObject::tr("sweep type")+" [lin, log, list, const]"));
+			    QObject::tr("sweep type")+" [lin, log, list, const]",
+	                    "n/a", "enum[lin, log, list, const]"));
   Props.append(new Property("Start", "1 GHz", true,
-			QObject::tr("start frequency in Hertz")));
+			    QObject::tr("start frequency"),
+			    "Hertz", "real"));
   Props.append(new Property("Stop", "10 GHz", true,
-			QObject::tr("stop frequency in Hertz")));
+			    QObject::tr("stop frequency"),
+			    "Hertz", "real"));
   Props.append(new Property("Points", "19", true,
-			QObject::tr("number of simulation steps")));
+			    QObject::tr("number of simulation steps"),
+			    "count", "integer"));
   Props.append(new Property("Noise", "no", false,
-			QObject::tr("calculate noise voltages")+
-			" [yes, no]"));
+			    QObject::tr("calculate noise voltages")+" [yes, no]",
+			    "n/a", "boolean"));
 }
 
 AC_Sim::~AC_Sim()
