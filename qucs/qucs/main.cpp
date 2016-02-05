@@ -459,6 +459,40 @@ void createIcons() {
   fprintf(stdout, "Created %i component icons from %i categories\n", nComps, nCats);
 }
 
+#include "leda.cpp"
+void dumpComponents()
+{
+    static const QStringList names = QStringList() << "resistor" << "capacitor";
+
+#if 0
+    Resistor
+    Resistor US
+    Capacitor
+    Inductor
+            dc Voltage Source
+            dc Current Source
+            ac Voltage Source
+            ac Current Source
+            dc simulation
+            Transient simulation
+            ac simulation
+    Current Probe
+    Voltage Probe
+#endif
+    Module::registerModules ();
+
+    foreach(QString category, Category::getCategories()) {
+        char *filename;
+        QString caption;
+        foreach (const Module *module, Category::getModules(category)) {
+            Element *element = (module->info) (caption, filename, true);
+            Component *component = static_cast<Component *>(element);
+            //fprintf(stdout, "%s", serialiseComponent(component).join("\n").toLocal8Bit().constData());
+            fprintf(stdout, "%s\n", caption.toLocal8Bit().constData());
+        }
+    }
+}
+
 /*!
  * \brief createDocData Create data used for documentation.
  *
@@ -967,7 +1001,7 @@ int main(int argc, char *argv[])
       return 0;
     }
     else if(!strcmp(argv[i], "-doc")) {
-      createDocData();
+      dumpComponents(); //createDocData();
       return 0;
     }
     else if(!strcmp(argv[i], "-list-entries")) {
