@@ -45,8 +45,8 @@ Coplanar::Coplanar()
   Lines.append(new Line(  8, 13, 16, 21,QPen(Qt::darkBlue,2)));
   Lines.append(new Line( 16, 13, 24, 21,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(new Port(-30, 0, "strip"));
+  Ports.append(new Port( 30, 0, "plane"));
 
   x1 = -30; y1 =-24;
   x2 =  30; y2 = 24;
@@ -59,17 +59,20 @@ Coplanar::Coplanar()
   Props.append(new Property("Subst", "Subst1", true,
 		QObject::tr("name of substrate definition")));
   Props.append(new Property("W", "1 mm", true,
-		QObject::tr("width of the line")));
+			    QObject::tr("width of the line"),
+			    "metre", "real"));
   Props.append(new Property("S", "1 mm", true,
-		QObject::tr("width of a gap")));
+			    QObject::tr("width of a gap"),
+			    "metre", "real"));
   Props.append(new Property("L", "10 mm", true,
-		QObject::tr("length of the line")));
+			    QObject::tr("length of the line"),
+			    "metre", "real"));
   Props.append(new Property("Backside", "Air", false,
-		QObject::tr("material at the backside of the substrate")+
-		" [Metal, Air]"));
+			    QObject::tr("material at the backside of the substrate")+" [Metal, Air]",
+			    "n/a", "enum[Metal, Air]"));
   Props.append(new Property("Approx", "yes", false,
-		QObject::tr("use approximation instead of precise equation")+
-		" [yes, no]"));
+			    QObject::tr("use approximation instead of precise equation")+" [yes, no]",
+			    "n/a", "boolean"));
 }
 
 Coplanar::~Coplanar()

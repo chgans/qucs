@@ -33,9 +33,9 @@ Circulator::Circulator()
 
   Lines.append(new Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));   // marks port 1
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
-  Ports.append(new Port(  0, 30));
+  Ports.append(new Port(-30,  0, "1"));
+  Ports.append(new Port( 30,  0, "2"));
+  Ports.append(new Port(  0, 30, "3"));
 
   x1 = -30; y1 = -16;
   x2 =  30; y2 =  30;
@@ -46,11 +46,14 @@ Circulator::Circulator()
   Name  = "X";
 
   Props.append(new Property("Z1", "50 Ohm", false,
-		QObject::tr("reference impedance of port 1")));
+			    QObject::tr("reference impedance of port 1"),
+			    "ohm", "real"));
   Props.append(new Property("Z2", "50 Ohm", false,
-		QObject::tr("reference impedance of port 2")));
+			    QObject::tr("reference impedance of port 2"),
+			    "ohm", "real"));
   Props.append(new Property("Z3", "50 Ohm", false,
-		QObject::tr("reference impedance of port 3")));
+			    QObject::tr("reference impedance of port 3"),
+			    "ohm", "real"));
 }
 
 Circulator::~Circulator()

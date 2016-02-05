@@ -47,10 +47,10 @@ CCVS::CCVS()
   Lines.append(new Line( 25, 27,-25, 27,QPen(Qt::darkGray,1)));
   Lines.append(new Line(-25, 27,-25,-27,QPen(Qt::darkGray,1)));
 
-  Ports.append(new Port(-30,-30));
-  Ports.append(new Port( 30,-30));
-  Ports.append(new Port( 30, 30));
-  Ports.append(new Port(-30, 30));
+  Ports.append(new Port(-30,-30, "in+"));
+  Ports.append(new Port( 30,-30, "in-"));
+  Ports.append(new Port( 30, 30, "out+"));
+  Ports.append(new Port(-30, 30, "out-"));
 
   x1 = -30; y1 = -30;
   x2 =  30; y2 =  30;
@@ -62,8 +62,11 @@ CCVS::CCVS()
   SpiceModel = "H";
 
   Props.append(new Property("G", "1 Ohm", true,
-		QObject::tr("forward transfer factor")));
-  Props.append(new Property("T", "0", false, QObject::tr("delay time")));
+			    QObject::tr("forward transfer factor"),
+			    "ohm", "real"));
+  Props.append(new Property("T", "0", false,
+			    QObject::tr("delay time"),
+			    "second", "real"));
 }
 
 CCVS::~CCVS()

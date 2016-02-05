@@ -26,11 +26,14 @@ Capacitor::Capacitor()
   Description = QObject::tr("capacitor");
 
   Props.append(new Property("C", "1 pF", true,
-		QObject::tr("capacitance in Farad")));
+			    QObject::tr("capacitance"),
+			    "farad", "real"));
   Props.append(new Property("V", "", false,
-		QObject::tr("initial voltage for transient simulation")));
+			    QObject::tr("initial voltage for transient simulation"),
+			    "volt", "real"));
   Props.append(new Property("Symbol", "neutral", false,
-	QObject::tr("schematic symbol")+" [neutral, polar]"));
+			    QObject::tr("schematic symbol")+" [neutral, polar]",
+			    "enum[neutral, polar]", "string"));
 
   createSymbol();
   tx = x1+4;
@@ -88,8 +91,8 @@ void Capacitor::createSymbol()
   Lines.append(new Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
   Lines.append(new Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(new Port(-30,  0, "+"));
+  Ports.append(new Port( 30,  0, "-"));
 
   x1 = -30; y1 = -13;
   x2 =  30; y2 =  13;

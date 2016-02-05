@@ -42,7 +42,8 @@ Resistor::Resistor(bool european)
 
   // this must be the last property in the list !!!
   Props.append(new Property("Symbol", "european", false,
-        QObject::tr("schematic symbol")+" [european, US]"));
+                            QObject::tr("schematic symbol")+" [european, US]",
+                            "n/a", "enum[european, US]"));
   if(!european)  Props.getLast()->Value = "US";
 
   createSymbol();
@@ -95,8 +96,8 @@ void Resistor::createSymbol()
     Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
   }
 
-  Ports.append(new Port(-30,  0, "1"));
-  Ports.append(new Port( 30,  0, "2"));
+  Ports.append(new Port(-30,  0, "+"));
+  Ports.append(new Port( 30,  0, "-"));
 
   x1 = -30; y1 = -11;
   x2 =  30; y2 =  11;

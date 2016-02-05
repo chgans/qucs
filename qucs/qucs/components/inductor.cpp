@@ -31,8 +31,8 @@ Inductor::Inductor()
   Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
   Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(new Port(-30,  0, "+"));
+  Ports.append(new Port( 30,  0, "-"));
 
   x1 = -30; y1 = -10;
   x2 =  30; y2 =   6;
@@ -44,9 +44,11 @@ Inductor::Inductor()
   SpiceModel = "L";
 
   Props.append(new Property("L", "1 nH", true,
-		QObject::tr("inductance in Henry")));
+                            QObject::tr("inductance"),
+                            "henry", "real"));
   Props.append(new Property("I", "", false,
-		QObject::tr("initial current for transient simulation")));
+                            QObject::tr("initial current for transient simulation"),
+                            "ampere", "real"));
 }
 
 Inductor::~Inductor()

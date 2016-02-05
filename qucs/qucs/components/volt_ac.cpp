@@ -34,8 +34,8 @@ Volt_ac::Volt_ac()
   Lines.append(new Line( 21,  8, 15,  8,QPen(Qt::red,1)));
   Lines.append(new Line(-18,  5,-18, 11,QPen(Qt::black,1)));
 
-  Ports.append(new Port( 30,  0));
-  Ports.append(new Port(-30,  0));
+  Ports.append(new Port( 30,  0, "+"));
+  Ports.append(new Port(-30,  0, "-"));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  14;
@@ -47,13 +47,17 @@ Volt_ac::Volt_ac()
   Name  = "V";
 
   Props.append(new Property("U", "1 V", true,
-		QObject::tr("peak voltage in Volts")));
+                            QObject::tr("peak voltage"),
+                            "volt", "real"));
   Props.append(new Property("f", "1 GHz", false,
-		QObject::tr("frequency in Hertz")));
+                            QObject::tr("frequency"),
+                            "hertz", "real"));
   Props.append(new Property("Phase", "0", false,
-		QObject::tr("initial phase in degrees")));
+                            QObject::tr("initial phase"),
+                            "degree", "real"));
   Props.append(new Property("Theta", "0", false,
-		QObject::tr("damping factor (transient simulation only)")));
+                            QObject::tr("damping factor (transient simulation only)"),
+                            "unitless", "real"));
 
   rotate();  // fix historical flaw
 }

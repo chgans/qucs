@@ -40,9 +40,9 @@ BiasT::BiasT()
   Lines.append(new Line(  0, 20,  0, 22,QPen(Qt::darkBlue,1)));
   Lines.append(new Line(  0, 22,  0, 30,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
-  Ports.append(new Port(  0, 30));
+  Ports.append(new Port(-30,  0, "AC"));
+  Ports.append(new Port( 30,  0, "AC+DC"));
+  Ports.append(new Port(  0, 30, "DC"));
 
   x1 = -30; y1 = -13;
   x2 =  30; y2 =  30;

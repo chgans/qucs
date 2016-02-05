@@ -29,8 +29,8 @@ Amplifier::Amplifier()
   Lines.append(new Line(-30,  0,-16,  0,QPen(Qt::darkBlue,2)));
   Lines.append(new Line( 16,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(new Port(-30,  0, "in"));
+  Ports.append(new Port( 30,  0, "out"));
 
   x1 = -30; y1 = -23;
   x2 =  30; y2 =  23;

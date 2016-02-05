@@ -47,10 +47,10 @@ CCCS::CCCS()
   Lines.append(new Line( 25, 27,-25, 27,QPen(Qt::darkGray,1)));
   Lines.append(new Line(-25, 27,-25,-27,QPen(Qt::darkGray,1)));
 
-  Ports.append(new Port(-30,-30));
-  Ports.append(new Port( 30,-30));
-  Ports.append(new Port( 30, 30));
-  Ports.append(new Port(-30, 30));
+  Ports.append(new Port(-30,-30, "in+"));
+  Ports.append(new Port( 30,-30, "in-"));
+  Ports.append(new Port( 30, 30, "out+"));
+  Ports.append(new Port(-30, 30, "out-"));
 
   x1 = -30; y1 = -30;
   x2 =  30; y2 =  30;
